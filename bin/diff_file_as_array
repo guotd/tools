@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * 以数组方式比较两个文件差异，比如比较产品两天的uid，输出新增用户和流失用户
+ * 
+ */
+if (count($argv) < 3) {
+	echo "Usage: $argv[0] <array file 1> <array file 2>\nGetting diff between the given two files.\n";
+	exit();
+}
+if (!file_exists($argv[1])) {
+	echo "file $argv[1] doesn't exists.\n";
+	exit();
+} else if (!file_exists($argv[2])) {
+	echo "file $argv[2] doesn't exists.\n";
+	exit();
+}
+
+ini_set('memory_limit', '2048M');
+$array1 = file("$argv[1]", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+echo "count of $argv[1]: " , count($array1) , PHP_EOL;
+
+$array2 = file("$argv[2]", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+echo "count of $argv[2]: " , count($array2) , PHP_EOL;
+
+$diff01 = array_diff($array1, $array2);
+if (!empty($diff01)) {
+	echo "----------------------------------------------------------\n";
+	echo "diff01 count ", count($diff01) , ": exists in $argv[1], not present in $argv[2]\n";
+	echo "----------------------------------------------------------\n";
+	foreach ($diff01 as $index => $key) {
+	    echo $index , "->" , $key , PHP_EOL;
+	}
+}
+
+$diff02 = array_diff($array2, $array1);
+if (!empty($diff02)) {
+	echo "----------------------------------------------------------\n";
+	echo "diff02 count ", count($diff02) , ": exists in $argv[2], not present in $argv[1]\n";
+	echo "----------------------------------------------------------\n";
+	foreach ($diff02 as $index => $key) {
+	    echo $index , "->" , $key, PHP_EOL;
+	}
+}
+
+?>
